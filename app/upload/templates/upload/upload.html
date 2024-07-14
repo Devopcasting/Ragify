@@ -1,0 +1,22 @@
+{% extends 'upload/layout.html'%}
+{% block content %}
+<div class="row border">
+    <div class="col py-5 border">
+        <form action="" method="POST" enctype="multipart/form-data" id="uploadForm">
+            {{form.hidden_tag()}}
+            <div class="mb-3">
+                {{form.file(class="form-control w-80 mb-2")}}
+                <small class="text-muted text-white">
+                    Supported document formats: PDF, TXT, MD, DOCX, HTML, XLS, XLSX, CSV. You can upload up to 200MB
+                    file size.
+                </small>
+            </div>
+            <div class="mb-3">
+                {{form.submit(class="btn btn-sm btn-success", id="submitButton")}}
+            </div>
+        </form>
+    </div>
+    <div class="col"></div>
+</div>
+
+{% endblock content %}
