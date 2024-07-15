@@ -1,7 +1,7 @@
 {% extends 'upload/layout.html'%}
 {% block content %}
-<div class="row border">
-    <div class="col py-5 border">
+<div class="row">
+    <div class="col py-5 border-end">
         <form action="" method="POST" enctype="multipart/form-data" id="uploadForm">
             {{form.hidden_tag()}}
             <div class="mb-3">
@@ -13,10 +13,52 @@
             </div>
             <div class="mb-3">
                 {{form.submit(class="btn btn-sm btn-success", id="submitButton")}}
+                <!-- Add a spinner element -->
+                <!-- <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div> -->
+                <div class="spinner-border spinner-border-sm text-success d-none" id="spinner" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         </form>
     </div>
-    <div class="col"></div>
+    <div class="col py-5">
+        {% if total_documents == 0 %}
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <div>No documents found.</div>
+            </div>
+        {% else %}
+            <table class="table tamble-sm table-bordered table-hover">
+                <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Uploaded Document</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents.items %}
+                        <tr>
+                            <td>{{doc.name}}</td>
+                            <td>Embedded</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 </div>
+{% block script %}
+<script>
+    const form = document.getElementById('uploadForm');
+    const spinner = document.getElementById('spinner');
+    const submitButton = document.getElementById('submitButton');
 
+    form.addEventListener('submit', () => {
+        spinner.classList.remove('d-none');
+        submitButton.disabled = true; // Disable the submit button
+    });
+</script>
+{% endblock script %}
 {% endblock content %}
