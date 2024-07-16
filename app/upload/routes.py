@@ -7,6 +7,8 @@ from app import app, db
 from app.upload.forms import UploadForm
 from app.models import Document
 from app.upload.doc_pdf.embedding import ProcessPDFDocument
+from app.upload.doc_text.embedding import ProcessTextDocument
+from app.upload.doc_docx.embedding import ProcessDocxDocument
 
 # Create a Blueprint instance for the 'upload' module
 upload_route = Blueprint('upload', __name__, template_folder='templates')
@@ -54,8 +56,14 @@ def identify_document_type(file_path) -> str:
     file_extension = os.path.splitext(file_path)[1][1:].lower()
     if file_extension == 'pdf':
         return 'PDF'
-    elif file_extension in ['md', 'txt', 'docx', 'html', 'csv', 'xls', 'xlsx']:
+    elif file_extension in ['md', 'txt' ]:
         return 'Text'
+    elif file_extension == 'docx':
+        return 'Docx'
+    elif file_extension == 'html':
+        return 'HTML'
+    elif file_extension in ['csv', 'xls', 'xlsx']:
+        return 'EXCEL'
     else:
         return 'Unknown'
     
@@ -99,6 +107,18 @@ def upload():
                     if not process_pdf.embed_doc():
                         flash(f"Failed to process PDF document! '{file_name}'", 'danger')
                         return redirect(request.url)
+                case 'Text':
+                    # Process the text document
+                    process_text = ProcessTextDocument(file_path, VECTOR_DB_PATH)
+                    if not process_text.embed_doc():
+                        flash(f"Failed to process text document! '{file_name}'", 'danger')
+                        return redirect(request.url)
+                case 'Docx':
+                    process_docx = ProcessDocxDocument(file_path, VECTOR_DB_PATH)
+                    if not process_docx.embed_doc():
+                        flash(f"Failed to process docx document! '{file_name}'", 'danger')
+                        return redirect(request.url)
+                    
             # Get the document size
             document_size = get_pdf_file_size(file_path)
            
