@@ -17,9 +17,22 @@
             <div>
                 <h3 class="float-md-start mb-0" style="color: chocolate;">ragify.ai</h3>
                 <nav class="nav nav-masthead justify-content-center float-md-end">
-                    <a class="nav-link fw-bold py-1 px-0" href="{{url_for('home.index')}}">Home</a>
-                    <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Add Document</a>
-                    <a class="nav-link fw-bold py-1 px-0" href="#">Query Your Document</a>
+                    {% if title == 'Home' %}
+                        <a class="nav-link fw-bold py-1 px-0 active" href="{{url_for('home.index')}}">Home</a>
+                    {% else %}
+                        <a class="nav-link fw-bold py-1 px-0" href="{{url_for('home.index')}}">Home</a>
+                    {% endif %}
+                    {% if title == 'Upload' %}
+                        <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="{{url_for('upload.upload')}}">Add Document</a>
+                    {% else %}
+                        <a class="nav-link fw-bold py-1 px-0" aria-current="page" href="{{url_for('upload.upload')}}">Add Document</a>
+                    {% endif %}
+                    {% if title == 'Query' %}
+                        <a class="nav-link fw-bold py-1 px-0 active" href="{{url_for('query.query')}}">Query Your Document</a>
+                    {% else %}
+                        <a class="nav-link fw-bold py-1 px-0" href="{{url_for('query.query')}}">Query Your Document</a>
+                    {% endif %}
+                    
                 </nav>
             </div>
         </header>

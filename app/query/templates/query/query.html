@@ -1,0 +1,73 @@
+{% extends 'upload/layout.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for category, message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Query form -->
+    <form action="" method="post" id="queryForm">
+        {{ form.hidden_tag() }}
+        <div class="input-group mb-3">
+            {{ form.query(class="form-control") }}
+            {{ form.submit(class="btn btn-outline-secondary", id="queryButton") }}
+        </div>
+    </form>
+    
+    <!-- Spinner -->
+    <div id="spinner" class="d-none text-center mt-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p style="color: aquamarine;">Fetching the answer...</p>
+    </div>
+    
+    <!-- Display the response if available -->
+    {% if response %}
+        <div class="container mt-4" style="color: ghostwhite;">
+            <h5>Response:</h5>
+            <p>{{ response | replace('\n', '<br>') | safe }}</p>
+        </div>
+        {% if source %}
+            <div class="container mt-2" style="color: ghostwhite;">
+                <h5>Source:</h5>
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Document</th>
+                            <th scope="col">Page Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in source %}
+                            <tr>
+                                <td>{{ s['doc'] }}</td>
+                                <td>{{ s['page'] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>    
+                </table>
+            </div>
+        {% else %}
+            <strong style="color: red;">Source documents not found.</strong>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+    // Show spinner on form submission
+    document.getElementById('queryForm').addEventListener('submit', function() {
+        document.getElementById('spinner').classList.remove('d-none');
+    });
+</script>
+{% endblock scripts %}
+{% endblock content %}

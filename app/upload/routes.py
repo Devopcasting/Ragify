@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from app import app, db
 from app.upload.forms import UploadForm
 from app.models import Document
-from app.upload.doc_pdf.embedding import ProcessPDFDcoument
+from app.upload.doc_pdf.embedding import ProcessPDFDocument
 
 # Create a Blueprint instance for the 'upload' module
 upload_route = Blueprint('upload', __name__, template_folder='templates')
@@ -95,7 +95,7 @@ def upload():
             match document_type:
                 case 'PDF':
                     # Process the PDF document
-                    process_pdf = ProcessPDFDcoument(file_path, VECTOR_DB_PATH)
+                    process_pdf = ProcessPDFDocument(file_path, VECTOR_DB_PATH)
                     if not process_pdf.embed_doc():
                         flash(f"Failed to process PDF document! '{file_name}'", 'danger')
                         return redirect(request.url)
@@ -114,3 +114,20 @@ def upload():
             flash(f"Document type not allowed! '{file_name}'", 'danger')
             return redirect(request.url)
     return render_template('upload/upload.html', title='Upload', form=form, documents=documents, total_documents=total_documents)
+
+# Clear Database
+@upload_route.route('/clear_database', methods=['GET', 'POST'])
+def clear_database():
+    # Clear the vector database folder
+    shutil.rmtree(VECTOR_DB_PATH, ignore_errors=True)
+    # Create the vector database folder
+    os.makedirs(VECTOR_DB_PATH, exist_ok=True)
+    # Clear the documents folder
+    shutil.rmtree(UPLOAD_FOLDER, ignore_errors=True)
+    # Create the documents folder
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    # Clear the documents from the database
+    Document.query.delete()
+    db.session.commit()
+    flash('Database cleared successfully!', 'success')
+    return redirect(url_for('upload.upload'))

@@ -12,25 +12,26 @@
                 </small>
             </div>
             <div class="mb-3">
-                {{form.submit(class="btn btn-sm btn-success", id="submitButton")}}
-                <!-- Add a spinner element -->
-                <!-- <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                  </div> -->
-                <div class="spinner-border spinner-border-sm text-success d-none" id="spinner" role="status">
+                {{form.submit(class="btn btn-sm btn-success me-3", id="submitButton")}}
+                <div class="spinner-border spinner-border-sm text-warning d-none" id="spinner" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col py-5">
-        {% if total_documents == 0 %}
+    {% if total_documents == 0 %}
+        <div class="col py-5">
             <div class="alert alert-warning d-flex align-items-center" role="alert">
                 <i class="bi bi-info-circle me-2"></i>
                 <div>No documents found.</div>
             </div>
-        {% else %}
-            <table class="table tamble-sm table-bordered table-hover">
+        </div>
+    {% else %}
+        <div class="col py-2">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
+                <a class="btn btn-primary btn-sm me-md-1" href="{{url_for('upload.clear_database')}}" role="button">Clear Database</a>
+            </div>
+            <table class="table table-sm table-bordered table-hover">
                 <thead class="table-secondary">
                     <tr>
                         <th scope="col">Uploaded Document</th>
@@ -46,6 +47,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
         {% endif %}
     </div>
 </div>
