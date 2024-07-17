@@ -9,6 +9,9 @@ from app.models import Document
 from app.upload.doc_pdf.embedding import ProcessPDFDocument
 from app.upload.doc_text.embedding import ProcessTextDocument
 from app.upload.doc_docx.embedding import ProcessDocxDocument
+from app.upload.doc_csv.embedding import ProcessCSVDocument
+from app.upload.doc_excel.embedding import ProcessExcelDocument
+from app.upload.doc_html.embedding import ProcessHTMLDocument
 
 # Create a Blueprint instance for the 'upload' module
 upload_route = Blueprint('upload', __name__, template_folder='templates')
@@ -62,8 +65,12 @@ def identify_document_type(file_path) -> str:
         return 'Docx'
     elif file_extension == 'html':
         return 'HTML'
-    elif file_extension in ['csv', 'xls', 'xlsx']:
+    elif file_extension in ['csv']:
+        return 'CSV'
+    elif file_extension in ['xlsx', 'xls']:
         return 'EXCEL'
+    elif file_extension in ['html']:
+        return 'HTML'
     else:
         return 'Unknown'
     
@@ -117,6 +124,21 @@ def upload():
                     process_docx = ProcessDocxDocument(file_path, VECTOR_DB_PATH)
                     if not process_docx.embed_doc():
                         flash(f"Failed to process docx document! '{file_name}'", 'danger')
+                        return redirect(request.url)
+                case 'CSV':
+                    process_csv = ProcessCSVDocument(file_path, VECTOR_DB_PATH)
+                    if not process_csv.embed_doc():
+                        flash(f"Failed to process EXCEL document! '{file_name}'", 'danger')
+                        return redirect(request.url)
+                case 'EXCEL':
+                    process_excel = ProcessExcelDocument(file_path, VECTOR_DB_PATH)
+                    if not process_excel.embed_doc():
+                        flash(f"Failed to process EXCEL document! '{file_name}'", 'danger')
+                        return redirect(request.url)
+                case 'HTML':
+                    process_html = ProcessHTMLDocument(file_path, VECTOR_DB_PATH)
+                    if not process_html.embed_doc():
+                        flash(f"Failed to process HTML document! '{file_name}'", 'danger')
                         return redirect(request.url)
                     
             # Get the document size
