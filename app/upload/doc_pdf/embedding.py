@@ -3,7 +3,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings.bedrock import BedrockEmbeddings
 import boto3
-import PyPDF2
+import nltk
+from nltk.corpus import stopwords
 
 class ProcessPDFDocument:
     def __init__(self, doc_path: str, vector_db_path: str) -> None:
@@ -28,6 +29,7 @@ class ProcessPDFDocument:
         pages = loader.load()
         return pages
     
+        
     def _split_documents(self, pages):
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=800,
