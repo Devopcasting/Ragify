@@ -11,7 +11,7 @@ from app.upload.doc_text.embedding import ProcessTextDocument
 from app.upload.doc_docx.embedding import ProcessDocxDocument
 from app.upload.doc_csv.embedding import ProcessCSVDocument
 from app.upload.doc_excel.embedding import ProcessExcelDocument
-from app.upload.doc_html.embedding import ProcessHTMLDocument
+
 
 # Create a Blueprint instance for the 'upload' module
 upload_route = Blueprint('upload', __name__, template_folder='templates')
@@ -29,7 +29,7 @@ os.makedirs(VECTOR_DB_PATH, exist_ok=True)
 
 # Allowed Extentions
 # The supported file types are PDF, MD, TXT, DOCX, HTML, CSV, XLS, and XLSX.
-ALLOWED_EXTENSIONS = {'pdf', 'md', 'txt', 'docx', 'html', 'csv', 'xls', 'xlsx'}
+ALLOWED_EXTENSIONS = {'pdf', 'txt', 'docx', 'csv', 'xls', 'xlsx'}
 ALLOWED_EXTENSIONS_STR = ", ".join(ALLOWED_EXTENSIONS)
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -62,15 +62,11 @@ def identify_document_type(file_path) -> str:
     elif file_extension in ['md', 'txt' ]:
         return 'Text'
     elif file_extension == 'docx':
-        return 'Docx'
-    elif file_extension == 'html':
-        return 'HTML'
+        return 'Docx' 
     elif file_extension in ['csv']:
         return 'CSV'
     elif file_extension in ['xlsx', 'xls']:
         return 'EXCEL'
-    elif file_extension in ['html']:
-        return 'HTML'
     else:
         return 'Unknown'
     
@@ -135,11 +131,6 @@ def upload():
                     if not process_excel.embed_doc():
                         flash(f"Failed to process EXCEL document! '{file_name}'", 'danger')
                         return redirect(request.url)
-                case 'HTML':
-                    process_html = ProcessHTMLDocument(file_path, VECTOR_DB_PATH)
-                    if not process_html.embed_doc():
-                        flash(f"Failed to process HTML document! '{file_name}'", 'danger')
-                        return redirect(request.url)
                     
             # Get the document size
             document_size = get_pdf_file_size(file_path)
@@ -160,7 +151,7 @@ def upload():
 # Clear Database
 @upload_route.route('/clear_database', methods=['GET', 'POST'])
 def clear_database():
-    # Clear the vector database folder
+    # Remove the vector database folder
     shutil.rmtree(VECTOR_DB_PATH, ignore_errors=True)
     # Create the vector database folder
     os.makedirs(VECTOR_DB_PATH, exist_ok=True)
